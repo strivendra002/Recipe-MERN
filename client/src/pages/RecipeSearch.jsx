@@ -48,7 +48,7 @@ const RecipeSearch = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/favorites/add", recipe, {
+      await axios.post("https://recipe-mern-noa1.onrender.com/api/favorites/add", recipe, {
         withCredentials: true,
       });
       alert("Recipe added to favorites!");

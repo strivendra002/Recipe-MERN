@@ -8,7 +8,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:5000/auth/logout', { withCredentials: true });
+      await axios.get('https://recipe-mern-noa1.onrender.com/auth/logout', { withCredentials: true });
       setUser(null);
       fetchUser(); // Ensure user is removed from session
       window.location.href = '/';

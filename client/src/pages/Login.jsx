@@ -5,7 +5,7 @@ const Login = () => {
   const { fetchUser } = useAuth();
 
   const handleGoogleLogin = async () => {
-    window.location.href = "http://localhost:5000/auth/google";
+    window.location.href = "https://recipe-mern-noa1.onrender.com/auth/google";
 
     // Delay refresh to fetch user data
     setTimeout(() => {

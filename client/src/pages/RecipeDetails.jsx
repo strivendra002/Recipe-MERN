@@ -21,7 +21,7 @@ const RecipeDetails = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/recipes/${id}`)
+      .get(`https://recipe-mern-noa1.onrender.com/api/recipes/${id}`)
       .then((res) => setRecipe(res.data))
       .catch((error) => console.error("Error fetching recipe details:", error))
       .finally(() => setLoading(false));

@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   // Fetch authenticated user when app loads
   const fetchUser = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/auth/user', { // ✅ FIXED URL
+      const res = await axios.get('https://recipe-mern-noa1.onrender.com/auth/user', { // ✅ FIXED URL
         withCredentials: true,
       });
       setUser(res.data);

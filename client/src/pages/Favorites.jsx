@@ -22,7 +22,7 @@ const Favorites = () => {
   useEffect(() => {
     if (user) {
       axios
-        .get("http://localhost:5000/api/favorites", { withCredentials: true })
+        .get("https://recipe-mern-noa1.onrender.com/api/favorites", { withCredentials: true })
         .then((res) => setFavorites(res.data))
         .catch((error) => console.error("Error fetching favorites:", error));
     }
@@ -30,7 +30,7 @@ const Favorites = () => {
 
   const removeFavorite = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/favorites/remove/${id}`, {
+      await axios.delete(`https://recipe-mern-noa1.onrender.com/api/favorites/remove/${id}`, {
         withCredentials: true,
       });
       setFavorites(favorites.filter((fav) => fav.id !== id));

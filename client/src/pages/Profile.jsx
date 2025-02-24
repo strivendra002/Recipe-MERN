@@ -44,7 +44,7 @@ const Profile = () => {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/user/${user._id}`, // ✅ Fix the URL
+        `https://recipe-mern-noa1.onrender.com/api/user/${user._id}`, // ✅ Fix the URL
         { cuisines, dietaryRestrictions },
         { withCredentials: true }
       );
@@ -68,7 +68,7 @@ const Profile = () => {
 
     try {
       await axios.put(
-        "http://localhost:5000/api/user/profile/avatar",
+        "https://recipe-mern-noa1.onrender.com/api/user/profile/avatar",
         formData,
         {
           withCredentials: true,

@@ -25,7 +25,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/auth/user", {
+      .get("https://recipe-mern-noa1.onrender.com/auth/user", {
         withCredentials: true,
       })
       .then((res) => {
@@ -42,7 +42,7 @@ const Home = () => {
   useEffect(() => {
     if (user) {
       axios
-        .get(`http://localhost:5000/api/recipes/recommendations/${user._id}`)
+        .get(`https://recipe-mern-noa1.onrender.com/api/recipes/recommendations/${user._id}`)
         .then((res) => setRecipes(res.data))
         .catch((error) =>
           console.error("Error fetching recommendations:", error)
