@@ -12,7 +12,7 @@ router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('http://localhost:5173/profile'); // Redirect user to frontend
+    res.redirect(process.env.FRONTEND_URL); // Redirect user to frontend
   }
 );
 
