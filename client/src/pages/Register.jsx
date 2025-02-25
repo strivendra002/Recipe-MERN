@@ -23,7 +23,7 @@ const Register = () => {
 
     try {
       const res = await axios.post(
-        "https://recipe-mern-noa1.onrender.com/auth/register",
+        "https://recipe-mern-noa1.onrender.com/api/auth/register",
         { name, email, password }
       );
 

@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
   // 🔹 Login function (Stores JWT token)
   const login = async (email, password) => {
     try {
-      const res = await axios.post('https://recipe-mern-noa1.onrender.com/api/auth/login', { email, password });
+      const res = await axios.post('https://recipe-mern-noa1.onrender.com/api/', { email, password });
       localStorage.setItem('token', res.data.token); // ✅ Store token
       setUser(res.data.user);
       return { success: true };

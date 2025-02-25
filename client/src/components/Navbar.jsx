@@ -9,7 +9,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("https://recipe-mern-noa1.onrender.com/auth/logout", null, {
+      await axios.post("https://recipe-mern-noa1.onrender.com/api/auth/logout", null, {
         withCredentials: true,
       });
 

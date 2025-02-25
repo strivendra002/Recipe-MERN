@@ -24,7 +24,7 @@ const Login = () => {
 
     try {
       const res = await axios.post(
-        "https://recipe-mern-noa1.onrender.com/auth/login",
+        "https://recipe-mern-noa1.onrender.com/api/auth/login",
         { email, password }
       );
 
