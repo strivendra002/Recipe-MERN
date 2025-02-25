@@ -35,7 +35,15 @@ const RecipeDetails = () => {
     );
 
   return (
-    <Box p={5} maxW="800px" mx="auto" boxShadow="lg" borderRadius="lg" bg="white" opacity={0.95}>
+    <Box
+      p={6}
+      maxW="800px"
+      mx="auto"
+      boxShadow="xl"
+      borderRadius="lg"
+      bg="whiteAlpha.900"
+      opacity={0.98}
+    >
       <Heading textAlign="center" color="gray.700">
         {recipe.title}
       </Heading>
@@ -61,16 +69,19 @@ const RecipeDetails = () => {
         borderRadius="md"
         mt={3}
         boxShadow="sm"
-        transition="0.3s"
         _hover={{ bg: "gray.100" }}
       >
-        <List spacing={2}>
-          {recipe.extendedIngredients.map((ing) => (
-            <ListItem key={ing.id} fontSize="md" color="gray.700">
-              ✅ {ing.original}
-            </ListItem>
-          ))}
-        </List>
+        {recipe.extendedIngredients?.length > 0 ? (
+          <List spacing={2}>
+            {recipe.extendedIngredients.map((ing) => (
+              <ListItem key={ing.id} fontSize="md" color="gray.700">
+                ✅ {ing.original}
+              </ListItem>
+            ))}
+          </List>
+        ) : (
+          <Text color="gray.600">No ingredients available.</Text>
+        )}
       </Box>
 
       {/* 🍽 Instructions */}
@@ -82,9 +93,7 @@ const RecipeDetails = () => {
         bg="gray.50"
         p={4}
         borderRadius="md"
-        whiteSpace="pre-line"
         boxShadow="sm"
-        transition="0.3s"
         _hover={{ bg: "gray.100" }}
         fontSize="md"
         color="gray.700"
@@ -102,28 +111,27 @@ const RecipeDetails = () => {
         borderRadius="md"
         mt={3}
         boxShadow="sm"
-        transition="0.3s"
         _hover={{ bg: "gray.100" }}
       >
         <Text>
           <Badge colorScheme="green" mr={2}>
             Calories:
           </Badge>
-          {recipe.nutrition?.nutrients.find((n) => n.name === "Calories")?.amount || "N/A"} kcal
+          {recipe.nutrition?.nutrients?.find((n) => n.name === "Calories")?.amount || "N/A"} kcal
         </Text>
         <Divider my={2} />
         <Text>
           <Badge colorScheme="blue" mr={2}>
             Protein:
           </Badge>
-          {recipe.nutrition?.nutrients.find((n) => n.name === "Protein")?.amount || "N/A"} g
+          {recipe.nutrition?.nutrients?.find((n) => n.name === "Protein")?.amount || "N/A"} g
         </Text>
         <Divider my={2} />
         <Text>
           <Badge colorScheme="orange" mr={2}>
             Carbs:
           </Badge>
-          {recipe.nutrition?.nutrients.find((n) => n.name === "Carbohydrates")?.amount || "N/A"} g
+          {recipe.nutrition?.nutrients?.find((n) => n.name === "Carbohydrates")?.amount || "N/A"} g
         </Text>
       </Box>
     </Box>

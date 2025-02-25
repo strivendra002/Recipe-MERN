@@ -17,6 +17,7 @@ const Profile = () => {
   const { user, fetchUser } = useAuth();
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false); // ✅ Track update state
 
   // ✅ Ensure initial state is always an array to avoid errors
   const [cuisines, setCuisines] = useState(user?.preferences?.cuisines || []);
@@ -36,33 +37,43 @@ const Profile = () => {
     return <Heading textAlign="center">Not Logged In</Heading>;
   }
 
+  // 🟢 Update Preferences
   const updatePreferences = async () => {
     if (!user || !user._id) {
       alert("User not found!");
       return;
     }
 
+    setUpdating(true);
     try {
       await axios.put(
-        `https://recipe-mern-noa1.onrender.com/api/user/${user._id}`, // ✅ Fix the URL
+        `https://recipe-mern-noa1.onrender.com/api/user/preferences`, // ✅ Updated endpoint
         { cuisines, dietaryRestrictions },
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ Send JWT token
+          },
+        }
       );
       alert("Preferences updated!");
       fetchUser(); // Refresh user data
     } catch (error) {
-      console.error("Error updating preferences:", error);
+      console.error("❌ Error updating preferences:", error.response?.data || error);
+      alert("Failed to update preferences. Please try again.");
+    } finally {
+      setUpdating(false);
     }
   };
 
+  // 🟢 Handle File Upload
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
   const uploadAvatar = async () => {
     if (!file) return alert("Please select a file");
-    setLoading(true);
 
+    setLoading(true);
     const formData = new FormData();
     formData.append("avatar", file);
 
@@ -71,14 +82,17 @@ const Profile = () => {
         "https://recipe-mern-noa1.onrender.com/api/user/profile/avatar",
         formData,
         {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ Send JWT token
+          },
         }
       );
       alert("Avatar updated!");
       fetchUser(); // Refresh user data
     } catch (error) {
-      console.error("Error uploading avatar:", error);
+      console.error("❌ Error uploading avatar:", error.response?.data || error);
+      alert("Failed to update avatar. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -131,7 +145,7 @@ const Profile = () => {
           }
         />
 
-        <Button className='button-55' onClick={updatePreferences} mt={3}>
+        <Button className='button-55' onClick={updatePreferences} mt={3} isLoading={updating}>
           Save Preferences
         </Button>
       </Box>

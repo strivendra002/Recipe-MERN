@@ -10,6 +10,7 @@ import {
   Button,
   Flex,
   Badge,
+  Spinner,
 } from "@chakra-ui/react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
@@ -17,14 +18,19 @@ import "./Favorites.css";
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true); // 🔹 Loading state
   const { user } = useAuth();
 
   useEffect(() => {
     if (user) {
       axios
-        .get("https://recipe-mern-noa1.onrender.com/api/favorites", { withCredentials: true })
+        .get("https://recipe-mern-noa1.onrender.com/api/favorites", {
+          withCredentials: true,
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }, // ✅ JWT Token
+        })
         .then((res) => setFavorites(res.data))
-        .catch((error) => console.error("Error fetching favorites:", error));
+        .catch((error) => console.error("Error fetching favorites:", error))
+        .finally(() => setLoading(false)); // 🔹 Stop loading
     }
   }, [user]);
 
@@ -32,8 +38,10 @@ const Favorites = () => {
     try {
       await axios.delete(`https://recipe-mern-noa1.onrender.com/api/favorites/remove/${id}`, {
         withCredentials: true,
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }, // ✅ JWT Token
       });
-      setFavorites(favorites.filter((fav) => fav.id !== id));
+
+      setFavorites((prev) => prev.filter((fav) => fav.id !== id)); // ✅ UI Updates Instantly
     } catch (error) {
       console.error("Error removing favorite:", error);
     }
@@ -50,7 +58,9 @@ const Favorites = () => {
     <VStack spacing={6} p={5} align="center">
       <Heading color="gray.700">Your Favorite Recipes</Heading>
 
-      {favorites.length === 0 ? (
+      {loading ? ( // 🔹 Show spinner while loading
+        <Spinner size="xl" color="teal.500" mt={5} />
+      ) : favorites.length === 0 ? (
         <Text fontSize="lg" color="gray.500">
           No favorites added yet.
         </Text>
@@ -60,7 +70,7 @@ const Favorites = () => {
             <Box
               key={recipe.id}
               p={4}
-              bg="whiteAlpha.800" // Semi-transparent background
+              bg="whiteAlpha.800"
               borderRadius="lg"
               boxShadow="md"
               transition="all 0.3s"

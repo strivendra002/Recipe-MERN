@@ -19,34 +19,41 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Home = () => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, fetchUser } = useAuth();
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Fetch User Data using JWT Token
   useEffect(() => {
-    axios
-      .get("https://recipe-mern-noa1.onrender.com/auth/user", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log("User Data:", res.data);
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token"); // ✅ Get token from storage
+      if (!token) return;
+
+      try {
+        const res = await axios.get("https://recipe-mern-noa1.onrender.com/auth/user", {
+          headers: { Authorization: `Bearer ${token}` }, // ✅ Send JWT
+        });
         setUser(res.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching user:", error);
         setUser(null);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
   }, []);
 
+  // ✅ Fetch Recommended Recipes based on user preferences
   useEffect(() => {
     if (user) {
       axios
-        .get(`https://recipe-mern-noa1.onrender.com/api/recipes/recommendations/${user._id}`)
+        .get(`https://recipe-mern-noa1.onrender.com/api/recipes/recommendations/${user._id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }, // ✅ Send JWT
+        })
         .then((res) => setRecipes(res.data))
-        .catch((error) =>
-          console.error("Error fetching recommendations:", error)
-        )
+        .catch((error) => console.error("Error fetching recommendations:", error))
         .finally(() => setLoading(false));
     }
   }, [user]);
@@ -65,14 +72,7 @@ const Home = () => {
       justifyContent="center"
       position="relative"
     >
-      <Box
-        position="absolute"
-        top="0"
-        left="0"
-        width="100%"
-        height="100%"
-        m="auto"
-      />
+      <Box position="absolute" top="0" left="0" width="100%" height="100%" m="auto" />
 
       <VStack
         zIndex="1"
@@ -94,18 +94,13 @@ const Home = () => {
             </Text>
 
             <Box textAlign="center">
-              <Heading size="md" mt={3}>
-                Your Preferences
-              </Heading>
+              <Heading size="md" mt={3}>Your Preferences</Heading>
               <List spacing={1}>
                 <ListItem>
-                  <strong>Cuisines:</strong>{" "}
-                  {user.preferences?.cuisines?.join(", ") || "Not Set"}
+                  <strong>Cuisines:</strong> {user.preferences?.cuisines?.join(", ") || "Not Set"}
                 </ListItem>
                 <ListItem>
-                  <strong>Dietary Restrictions:</strong>{" "}
-                  {user.preferences?.dietaryRestrictions?.join(", ") ||
-                    "Not Set"}
+                  <strong>Dietary Restrictions:</strong> {user.preferences?.dietaryRestrictions?.join(", ") || "Not Set"}
                 </ListItem>
               </List>
             </Box>
@@ -114,14 +109,10 @@ const Home = () => {
               Update Preferences
             </Button>
 
-            <Heading size="lg" mt={6}>
-              Recommended Recipes
-            </Heading>
+            <Heading size="lg" mt={6}>Recommended Recipes</Heading>
 
             {recipes.length === 0 ? (
-              <Text>
-                No recommendations found. Try updating your preferences!
-              </Text>
+              <Text>No recommendations found. Try updating your preferences!</Text>
             ) : (
               <Flex overflowX="auto" w="full" p={3}>
                 <HStack spacing={4}>
@@ -136,11 +127,7 @@ const Home = () => {
                       p={3}
                       boxShadow="lg"
                     >
-                      <Image
-                        src={recipe.image}
-                        alt={recipe.title}
-                        borderRadius="md"
-                      />
+                      <Image src={recipe.image} alt={recipe.title} borderRadius="md" />
                       <Heading size="md" mt={2} noOfLines={2}>
                         {recipe.title}
                       </Heading>
@@ -161,7 +148,7 @@ const Home = () => {
           </>
         ) : (
           <Button as={Link} to="/login" className="button-55">
-            Login with Google
+            Login
           </Button>
         )}
       </VStack>

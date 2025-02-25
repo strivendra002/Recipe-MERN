@@ -1,38 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { Routes, Route,BrowserRouter } from 'react-router-dom'
-import './App.css'
-import Login from './pages/Login'
-import Profile from './pages/Profile'
-import Home from './pages/Home'
-import Navbar from './components/Navbar'
-import RecipeSearch from './pages/RecipeSearch'
-import Favorites from './pages/Favorites'
-import RecipeDetails from './pages/RecipeDetails'
+import { Suspense, lazy } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
+import Navbar from "./components/Navbar";
+import Register from "./pages/Register";
+
+// Lazy Load Pages (Optimizes Performance)
+const Home = lazy(() => import("./pages/Home"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Login = lazy(() => import("./pages/Login"));
+const RecipeSearch = lazy(() => import("./pages/RecipeSearch"));
+const Favorites = lazy(() => import("./pages/Favorites"));
+const RecipeDetails = lazy(() => import("./pages/RecipeDetails"));
 
 function App() {
-  
-
   return (
-    <>
-    
-    <BrowserRouter>
-    <Navbar/>
-       <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/search" element={<RecipeSearch />} />
-      <Route path="/favorites" element={<Favorites />} />
-      <Route path="/recipes/:id" element={<RecipeDetails />} />
-
-
-
-    </Routes>
-    </BrowserRouter>
-    </>
-  )
+    <Router>
+      <Navbar />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/search" element={<RecipeSearch />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/recipes/:id" element={<RecipeDetails />} />
+        </Routes>
+      </Suspense>
+    </Router>
+  );
 }
 
-export default App
+export default App;

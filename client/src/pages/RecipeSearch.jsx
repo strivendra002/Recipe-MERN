@@ -48,9 +48,15 @@ const RecipeSearch = () => {
     }
 
     try {
-      await axios.post("https://recipe-mern-noa1.onrender.com/api/favorites/add", recipe, {
-        withCredentials: true,
-      });
+      await axios.post(
+        "https://recipe-mern-noa1.onrender.com/api/favorites/add",
+        recipe,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ Send JWT Token
+          },
+        }
+      );
       alert("Recipe added to favorites!");
     } catch (error) {
       console.error("Error adding to favorites:", error);
@@ -82,13 +88,18 @@ const RecipeSearch = () => {
           <Box
             key={recipe.id}
             p={4}
-            bg="whiteAlpha.800" // Reduced opacity
+            bg="whiteAlpha.800"
             borderRadius="lg"
             boxShadow="md"
             transition="all 0.3s"
-            _hover={{ bg: "white", opacity: 1, transform: "scale(1.05)", boxShadow: "xl" }}
-            maxW="300px"
-            opacity={0.9} // Default opacity
+            _hover={{
+              bg: "white",
+              opacity: 1,
+              transform: "scale(1.05)",
+              boxShadow: "xl",
+            }}
+            maxW="250px" // ✅ Made the cards smaller
+            opacity={0.9}
           >
             <Image
               src={recipe.image}
@@ -96,7 +107,7 @@ const RecipeSearch = () => {
               borderRadius="lg"
               objectFit="cover"
               w="100%"
-              h="200px"
+              h="180px" // ✅ Reduced height for uniformity
             />
             <Heading size="md" mt={3} color="gray.700" noOfLines={2}>
               {recipe.title}

@@ -1,22 +1,21 @@
 import { useState } from "react";
 import axios from "axios";
 import { VStack, Input, Button, Heading, Text } from "@chakra-ui/react";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const { setUser, fetchUser } = useAuth();
+const Register = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // ✅ For redirecting after registration
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     setLoading(true);
     setError(null);
 
-    if (!email || !password) {
+    if (!name || !email || !password) {
       setError("All fields are required!");
       setLoading(false);
       return;
@@ -24,18 +23,14 @@ const Login = () => {
 
     try {
       const res = await axios.post(
-        "https://recipe-mern-noa1.onrender.com/auth/login",
-        { email, password }
+        "https://recipe-mern-noa1.onrender.com/auth/register",
+        { name, email, password }
       );
 
-      localStorage.setItem("token", res.data.token); // ✅ Store JWT token
-      setUser(res.data.user);
-      fetchUser(); // ✅ Fetch user data again
-
-      alert("Login successful!");
-      navigate("/"); // ✅ Redirect to homepage
+      alert("Registration successful! Please login.");
+      navigate("/login"); // ✅ Redirect to login page
     } catch (error) {
-      setError(error.response?.data?.message || "Login failed");
+      setError(error.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -43,10 +38,15 @@ const Login = () => {
 
   return (
     <VStack spacing={4} p={5} maxW="400px" mx="auto">
-      <Heading>Login</Heading>
+      <Heading>Register</Heading>
 
       {error && <Text color="red.500">{error}</Text>}
 
+      <Input
+        placeholder="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
       <Input
         placeholder="Email"
         type="email"
@@ -60,16 +60,15 @@ const Login = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <Button colorScheme="teal" onClick={handleLogin} isLoading={loading}>
-        Login
+      <Button colorScheme="teal" onClick={handleRegister} isLoading={loading}>
+        Register
       </Button>
 
       <Text>
-        Don't have an account?{" "}
-        <a href="/register" style={{ color: "blue" }}>Register</a>
+        Already have an account? <a href="/login" style={{ color: "blue" }}>Login</a>
       </Text>
     </VStack>
   );
 };
 
-export default Login;
+export default Register;

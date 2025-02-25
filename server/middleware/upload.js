@@ -2,18 +2,20 @@ import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../config/cloudinary.js';
 
-// Cloudinary Storage Configuration
+// 🔹 Cloudinary Storage Configuration
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'recipe-app/avatars', // Cloudinary folder name
-    allowed_formats: ['jpeg', 'jpg', 'png'], // Allowed image types
-    transformation: [{ width: 300, height: 300, crop: 'fill' }], // Resize image
+    folder: 'recipe-app/avatars', // Cloudinary folder
+    allowed_formats: ['jpeg', 'jpg', 'png'], // Allowed formats
+    transformation: [{ width: 300, height: 300, crop: 'fill' }], // Resize
   },
 });
 
+// 🔹 Multer Setup
 const upload = multer({ storage });
-upload.single('avatar'); // Debugging 
-console.log('✅ Multer is ready for uploads');
+
+// ✅ Debugging Logs
+console.log('✅ Multer is ready for file uploads');
 
 export default upload;
