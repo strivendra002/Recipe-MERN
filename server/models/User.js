@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema(
       {
         id: {
           type: String, // Recipe ID from Spoonacular API
-          required: true,
+          // required: true,
           unique: true, // Ensures no duplicate favorite recipes
         },
         title: { type: String, required: true },
