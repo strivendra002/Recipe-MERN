@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      const res = await axios.get('https://recipe-mern-noa1.onrender.com/api/user', {
+      const res = await axios.get('https://recipe-mern-noa1.onrender.com/api/auth/user', {
         headers: { Authorization: `Bearer ${token}` }, // ✅ Send JWT token
       });
 
