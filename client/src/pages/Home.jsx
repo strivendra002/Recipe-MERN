@@ -30,7 +30,7 @@ const Home = () => {
       if (!token) return;
     
       try {
-        const res = await axios.get("https://recipe-mern-noa1.onrender.com/api/user", {
+        const res = await axios.get("https://recipe-mern-noa1.onrender.com/api/user/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data);
