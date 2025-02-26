@@ -57,14 +57,15 @@ const Home = () => {
   useEffect(() => {
     if (user) {
       axios
-        .get(`https://recipe-mern-noa1.onrender.com/api/recipes/recommendations/${user._id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }, // ✅ Send JWT
+        .get(`https://recipe-mern-noa1.onrender.com/api/recipes/recommendations`, { // ✅ Fix path
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => setRecipes(res.data))
         .catch((error) => console.error("Error fetching recommendations:", error))
         .finally(() => setLoading(false));
     }
   }, [user]);
+  
 
   if (loading) return <Spinner size="xl" />;
 

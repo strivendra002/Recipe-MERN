@@ -27,25 +27,25 @@ router.get('/:id', async (req, res) => {
 // 🟢 Fetch Recipe Recommendations Based on User Preferences (JWT Protected)
 router.get('/recommendations', ensureAuth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.id); // ✅ Fix user lookup
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const { cuisines, dietaryRestrictions } = user.preferences || {};
 
-    // Convert preferences into a query string
     const cuisineQuery = cuisines?.length ? `&cuisine=${cuisines.join(',')}` : '';
     const dietQuery = dietaryRestrictions?.length ? `&diet=${dietaryRestrictions.join(',')}` : '';
 
-    // Fetch recipes based on preferences
     const response = await axios.get(
       `https://api.spoonacular.com/recipes/complexSearch?number=10&apiKey=${process.env.SPOONACULAR_API_KEY}${cuisineQuery}${dietQuery}`
     );
 
-    res.json(response.data.results);
+    const recipes = response.data.results || response.data.recipes || [];
+    res.json(recipes);
   } catch (error) {
     console.error('❌ Error fetching recommendations:', error.response?.data || error.message);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
 
 export default router;
