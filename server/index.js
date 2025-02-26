@@ -1,10 +1,9 @@
 import express from 'express';
-import session from 'express-session';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-import authRoutes from './routes/authRoutes.js';  // JWT-based auth
+import authRoutes from './routes/authRoutes.js';
 import favoritesRoutes from './routes/favoritesRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import recipeRoutes from './routes/recipeRoutes.js';
@@ -24,23 +23,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 🟢 Configure Secure Express Sessions (For JWT Refresh Tokens)
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false, httpOnly: true, sameSite: 'lax' },
-  })
-);
-
-// 🟢 Serve Static Files from `public/` directory
-app.use(express.static("public"));
-
-// 🟢 API Routes
-app.use('/api/auth', authRoutes); 
+// 🟢 Register API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/favorites', favoritesRoutes);
-app.use('/api/user', userRoutes);
+app.use('/api/user', userRoutes); // ✅ Ensures `/api/user` exists
 app.use('/api/recipes', recipeRoutes);
 
 // 🟢 Connect to MongoDB
@@ -51,14 +37,3 @@ mongoose
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-
-mongoose.connection.once('open', async () => {
-  console.log('✅ MongoDB Connected');
-
-  try {
-    await mongoose.connection.db.collection('users').dropIndex('googleId_1');
-    console.log('🗑️ Removed old googleId index');
-  } catch (error) {
-    console.log('⚠️ googleId index not found or already removed');
-  }
-});

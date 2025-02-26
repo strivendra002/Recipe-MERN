@@ -30,7 +30,7 @@ const Home = () => {
       if (!token) return;
 
       try {
-        const res = await axios.get("https://recipe-mern-noa1.onrender.com/auth/user", {
+        const res = await axios.get("https://recipe-mern-noa1.onrender.com/api/user", {
           headers: { Authorization: `Bearer ${token}` }, // ✅ Send JWT
         });
         setUser(res.data);
