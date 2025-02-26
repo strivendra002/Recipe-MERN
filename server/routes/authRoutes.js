@@ -39,22 +39,31 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find User
+    // Find user
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid email or password' });
 
-    // Compare Password
+    // Verify password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid email or password' });
 
-    // Generate JWT Token
-    const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, {
-      expiresIn: '1h',
+    // 🟢 Generate Access Token (Short Expiry)
+    const accessToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '15m' });
+
+    // 🟢 Generate Refresh Token (Long Expiry)
+    const refreshToken = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '30d' });
+
+    // 🟢 Store Refresh Token in HTTP-Only Cookie
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
 
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+    res.json({ accessToken, user: { id: user._id, name: user.name, email: user.email } });
   } catch (error) {
-    console.error('❌ Login Error:', error);
+    console.error('Login Error:', error);
     res.status(500).json({ error: 'Login failed' });
   }
 });
