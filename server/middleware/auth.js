@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 export const ensureAuth = (req, res, next) => {
   const authHeader = req.header("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
