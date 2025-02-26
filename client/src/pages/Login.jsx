@@ -3,6 +3,7 @@ import axios from "axios";
 import { VStack, Input, Button, Heading, Text } from "@chakra-ui/react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api";
 //import { set } from "mongoose";
 
 const Login = () => {

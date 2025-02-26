@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { fetchUserProfile } from "../api";
 
 const Home = () => {
   const { user, setUser, fetchUser } = useAuth();

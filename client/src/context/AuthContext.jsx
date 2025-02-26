@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 
 // Create AuthContext
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 // AuthProvider Component
 export const AuthProvider = ({ children }) => {
@@ -11,21 +11,28 @@ export const AuthProvider = ({ children }) => {
 
   // Fetch authenticated user when app loads
   const fetchUser = async () => {
-    try {
-      const token = localStorage.getItem('token'); // 🔹 Get token from storage
-      if (!token) {
-        setUser(null);
-        return;
-      }
+    const token = localStorage.getItem('token');
 
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
       const res = await axios.get('https://recipe-mern-noa1.onrender.com/api/auth/user', {
-        headers: { Authorization: `Bearer ${token}` }, // ✅ Send JWT token
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       setUser(res.data);
     } catch (error) {
       console.error('❌ Error fetching user:', error);
-      setUser(null);
+
+      if (error.response?.status === 401) {
+        logout(); // 🔹 Auto logout on invalid token
+      } else {
+        setUser(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -34,13 +41,20 @@ export const AuthProvider = ({ children }) => {
   // 🔹 Login function (Stores JWT token)
   const login = async (email, password) => {
     try {
-      const res = await axios.post('https://recipe-mern-noa1.onrender.com/api/', { email, password });
-      localStorage.setItem('token', res.data.token); // ✅ Store token
+      const res = await axios.post('https://recipe-mern-noa1.onrender.com/api/auth/login', {
+        email,
+        password,
+      });
+
+      localStorage.setItem('token', res.data.token);
       setUser(res.data.user);
       return { success: true };
     } catch (error) {
       console.error('❌ Login failed:', error);
-      return { success: false, message: error.response?.data?.message || 'Login failed' };
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || 'Login failed',
+      };
     }
   };
 
