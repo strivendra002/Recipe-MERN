@@ -26,21 +26,34 @@ const Home = () => {
   // ✅ Fetch User Data using JWT Token
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem("token"); // ✅ Get token from storage
+      let token = localStorage.getItem("token");
       if (!token) return;
-
+    
       try {
         const res = await axios.get("https://recipe-mern-noa1.onrender.com/api/user", {
-          headers: { Authorization: `Bearer ${token}` }, // ✅ Send JWT
+          headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data);
       } catch (error) {
-        console.error("Error fetching user:", error);
-        setUser(null);
-      } finally {
-        setLoading(false);
+        if (error.response?.status === 401) {
+          console.log("🔄 Token expired, refreshing...");
+          
+          try {
+            const refreshRes = await axios.post("https://recipe-mern-noa1.onrender.com/api/auth/refresh-token", {}, { withCredentials: true });
+            localStorage.setItem("token", refreshRes.data.accessToken);
+            fetchUserData(); // Retry with new token
+          } catch (refreshError) {
+            console.error("❌ Refresh token failed:", refreshError);
+            setUser(null);
+            localStorage.removeItem("token"); // Logout
+          }
+        } else {
+          console.error("Error fetching user:", error);
+          setUser(null);
+        }
       }
     };
+    
 
     fetchUserData();
   }, []);
