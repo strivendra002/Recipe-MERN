@@ -3,6 +3,7 @@ import axios from "axios";
 import { VStack, Input, Button, Heading, Text } from "@chakra-ui/react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+//import { set } from "mongoose";
 
 const Login = () => {
   const { setUser, fetchUser } = useAuth();
@@ -10,36 +11,31 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const[token, setToken] = useState(null);
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
 
-    if (!email || !password) {
-      setError("All fields are required!");
-      setLoading(false);
-      return;
-    }
+  if (!email || !password) {
+    setError("All fields are required!");
+    setLoading(false);
+    return;
+  }
 
-    try {
-      const res = await axios.post(
-        "https://recipe-mern-noa1.onrender.com/api/auth/login",
-        { email, password }
-      );
+  try {
+    const res = await loginUser(email, password); // ✅ Centralized API call
+    localStorage.setItem("token", res.data.accessToken);
+    setUser(res.data.user);
+    navigate("/");
+  } catch (error) {
+    setError(error.response?.data?.message || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
-      localStorage.setItem("token", res.data.token); // ✅ Store JWT token
-      setUser(res.data.user);
-      fetchUser(); // ✅ Fetch user data again
-
-      alert("Login successful!");
-      navigate("/"); // ✅ Redirect to homepage
-    } catch (error) {
-      setError(error.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <VStack spacing={4} p={5} maxW="400px" mx="auto">

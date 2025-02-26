@@ -39,31 +39,30 @@ const Profile = () => {
 
   // 🟢 Update Preferences
   const updatePreferences = async () => {
-    if (!user || !user._id) {
-      alert("User not found!");
-      return;
+    if (!user || !user._id) return alert("User not found!");
+  
+    if (
+      cuisines.join(", ") === user.preferences?.cuisines?.join(", ") &&
+      dietaryRestrictions.join(", ") === user.preferences?.dietaryRestrictions?.join(", ")
+    ) {
+      return alert("No changes detected.");
     }
-
+  
     setUpdating(true);
     try {
-      await axios.put(
-        `https://recipe-mern-noa1.onrender.com/api/user/preferences`, // ✅ Updated endpoint
-        { cuisines, dietaryRestrictions },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ Send JWT token
-          },
-        }
-      );
+      await axios.put(`${API_BASE}/user/preferences`, { cuisines, dietaryRestrictions }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+  
+      fetchUser(); // ✅ Refresh user data
       alert("Preferences updated!");
-      fetchUser(); // Refresh user data
     } catch (error) {
-      console.error("❌ Error updating preferences:", error.response?.data || error);
-      alert("Failed to update preferences. Please try again.");
+      alert("Failed to update preferences.");
     } finally {
       setUpdating(false);
     }
   };
+  
 
   // 🟢 Handle File Upload
   const handleFileChange = (e) => {

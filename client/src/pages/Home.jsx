@@ -26,37 +26,31 @@ const Home = () => {
   // ✅ Fetch User Data using JWT Token
   useEffect(() => {
     const fetchUserData = async () => {
-      let token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
       if (!token) return;
-    
+  
       try {
-        const res = await axios.get("https://recipe-mern-noa1.onrender.com/api/user/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetchUserProfile(token);
         setUser(res.data);
       } catch (error) {
         if (error.response?.status === 401) {
           console.log("🔄 Token expired, refreshing...");
-          
           try {
-            const refreshRes = await axios.post("https://recipe-mern-noa1.onrender.com/api/auth/refresh-token", {}, { withCredentials: true });
+            const refreshRes = await axios.post(`${API_BASE}/auth/refresh-token`, {}, { withCredentials: true });
             localStorage.setItem("token", refreshRes.data.accessToken);
             fetchUserData(); // Retry with new token
           } catch (refreshError) {
-            console.error("❌ Refresh token failed:", refreshError);
+            console.error("❌ Refresh failed:", refreshError);
             setUser(null);
-            localStorage.removeItem("token"); // Logout
+            localStorage.removeItem("token");
           }
-        } else {
-          console.error("Error fetching user:", error);
-          setUser(null);
         }
       }
     };
-    
-
-    fetchUserData();
+  
+    if (!user) fetchUserData();
   }, []);
+  
 
   // ✅ Fetch Recommended Recipes based on user preferences
   useEffect(() => {
