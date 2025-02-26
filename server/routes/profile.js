@@ -4,10 +4,10 @@ import { ensureAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// 🟢 Get Authenticated User Profile
+// ✅ Get Authenticated User Profile
 router.get('/', ensureAuth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.userId).select('-password');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     res.json(user);
@@ -17,18 +17,15 @@ router.get('/', ensureAuth, async (req, res) => {
   }
 });
 
-// 🟢 Update User Profile
+// ✅ Update User Profile
 router.put('/', ensureAuth, async (req, res) => {
   try {
     const { name, avatar, preferences } = req.body;
     const user = await User.findById(req.user.userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Only update fields that are provided
     if (name) user.name = name;
     if (avatar) user.avatar = avatar;
-
-    // Merge preferences instead of replacing them entirely
     if (preferences) {
       user.preferences = {
         ...user.preferences,
