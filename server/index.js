@@ -51,3 +51,14 @@ mongoose
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+mongoose.connection.once('open', async () => {
+  console.log('✅ MongoDB Connected');
+
+  try {
+    await mongoose.connection.db.collection('users').dropIndex('googleId_1');
+    console.log('🗑️ Removed old googleId index');
+  } catch (error) {
+    console.log('⚠️ googleId index not found or already removed');
+  }
+});
