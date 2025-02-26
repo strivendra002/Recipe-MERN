@@ -54,5 +54,16 @@ router.put('/avatar', ensureAuth, async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+router.get('/preferences', ensureAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('preferences');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json(user.preferences);
+  } catch (error) {
+    console.error('Error fetching preferences:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 export default router;
