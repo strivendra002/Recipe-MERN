@@ -1,4 +1,4 @@
-##Recipe App (MERN Stack)
+**Recipe App (MERN Stack)**
 
 A full-stack Recipe Application built using the MERN stack (MongoDB, Express.js, React.js, Node.js). Users can search any dish and quickly find detailed recipes.
 
