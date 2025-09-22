@@ -4,7 +4,7 @@ A full-stack Recipe Application built using the MERN stack (MongoDB, Express.js,
 
 Live Demo
 
-🌐 Try it online
+🌐 Try it online - https://trivendrasrecipes.netlify.app/
 
 Features
 
